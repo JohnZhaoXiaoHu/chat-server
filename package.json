@@ -1,0 +1,32 @@
+{
+  "name": "chat-server",
+  "version": "0.1.0",
+  "description": "chat to everyone",
+  "author": "xg4 <xingor4@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js --watch"
+  },
+  "dependencies": {
+    "koa": "^2.6.2",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^7.4.0",
+    "mongoose": "^5.4.3",
+    "socket.io": "^2.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xg4/chat-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xg4/chat-server/issues"
+  },
+  "homepage": "https://github.com/xg4/chat-server",
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9"
+  }
+}
