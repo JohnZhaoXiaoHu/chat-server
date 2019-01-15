@@ -15,10 +15,15 @@ const UserSchema = new Schema({
     type: String
   },
 
-  email: {
-    type: String,
-    unique: true
-  },
+  // phone: {
+  //   type: Number,
+  //   unique: true
+  // },
+
+  // email: {
+  //   type: String,
+  //   unique: true
+  // },
 
   location: {
     type: String
