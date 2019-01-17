@@ -61,7 +61,7 @@ const UserSchema = new Schema({
 })
 
 UserSchema.index({ username: 1 })
-UserSchema.index({ email: 1 })
+// UserSchema.index({ email: 1 })
 
 UserSchema.pre('save', next => {
   this.update_at = new Date()
