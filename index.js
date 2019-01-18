@@ -10,8 +10,8 @@ app.use(bodyParser())
 
 app.use(async (ctx, next) => {
   ctx.set('Access-Control-Allow-Origin', '*')
-  ctx.set('Access-Control-Allow-Headers', 'Content-type')
-  ctx.set('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS,PATCH')
+  ctx.set('Access-Control-Allow-Headers', '*')
+  ctx.set('Access-Control-Allow-Methods', '*')
   await next()
 })
 

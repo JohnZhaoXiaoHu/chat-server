@@ -39,6 +39,7 @@ exports.join = async ctx => {
     ctx.response.status = 201
     ctx.body = savedUser
   } catch (err) {
+    console.log(err)
     ctx.response.status = 500
     ctx.body = '注册失败！'
   }
