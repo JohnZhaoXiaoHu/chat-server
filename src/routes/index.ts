@@ -1,12 +1,13 @@
 import Router from "koa-router";
-import { Sign, Chat, User } from "../controller";
+import { Chat, User } from "../controller";
 
 const router = new Router();
 
-router.post("/user", Sign.join);
-router.post("/login", Sign.login);
+router.post("/join", User.new);
+router.post("/login", User.login);
 
 // get user info
+router.get("/user", User.auth);
 router.get("/user/:id", User.get);
 
 // add chat

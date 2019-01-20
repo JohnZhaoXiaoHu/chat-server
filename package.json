@@ -5,7 +5,7 @@
   "author": "xg4 <xingor4@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon --watch 'src/**/*' -e ts,tsx --exec ts-node src/index.ts",
+    "dev": "nodemon --watch ./src -e ts,tsx --exec ts-node src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js"
   },

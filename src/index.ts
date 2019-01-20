@@ -1,21 +1,42 @@
-import Http from "http";
+import http from "http";
 import Koa from "koa";
-// import * as jwt from "koa-jwt";
+import jwt from "koa-jwt";
 import koaBody from "koa-body";
-import cors from "./middlewares/cors";
+import cors from "./middleware/cors";
 import router from "./routes";
 import "./models";
+import config from "./config";
 
 const app = new Koa();
-const server = Http.createServer(app.callback());
 
-// app.use(jwt({ secret: "shared-secret" }).unless({ path: [/^\/public/] }));
+app.use((ctx, next) => {
+  return next().catch(err => {
+    console.log("error");
+    if (err.status === 401) {
+      ctx.status = 401;
+      ctx.body = {
+        ok: false,
+        msg: err.originalError ? err.originalError.message : err.message
+      };
+    } else {
+      throw err;
+    }
+  });
+});
+
+app.use(
+  jwt({ secret: config.secret }).unless({
+    path: [/^\/login/, /^\/join/]
+  })
+);
+
 app.use(koaBody());
 
 app.use(cors);
 
 app.use(router.routes()).use(router.allowedMethods());
 
+const server = http.createServer(app.callback());
 server.listen(8080, () => {
   console.log("server is running");
 });
