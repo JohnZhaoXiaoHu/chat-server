@@ -16,3 +16,4 @@ db.once("open", function() {
 
 export { default as User } from "./user";
 export { default as Chat } from "./chat";
+export { default as Friend } from "./friend";

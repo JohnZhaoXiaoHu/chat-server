@@ -9,6 +9,10 @@ import config from "./config";
 
 const app = new Koa();
 
+app.use(cors);
+
+app.use(koaBody());
+
 app.use((ctx, next) => {
   return next().catch(err => {
     console.log("error");
@@ -25,14 +29,11 @@ app.use((ctx, next) => {
 });
 
 app.use(
-  jwt({ secret: config.secret }).unless({
-    path: [/^\/login/, /^\/join/]
+  jwt({ secret: config.secret, key: "target" }).unless({
+    path: [/^\/login/, /^\/join/],
+    method: "OPTIONS"
   })
 );
-
-app.use(koaBody());
-
-app.use(cors);
 
 app.use(router.routes()).use(router.allowedMethods());
 

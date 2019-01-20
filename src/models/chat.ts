@@ -2,15 +2,16 @@ import { Schema, Model, model, Document } from "mongoose";
 const ObjectId = Schema.Types.ObjectId;
 
 export interface ChatDocument extends Document {
-  chat_id: string;
+  id: string;
   from: string;
   to: string;
   content: string;
-  create_at?: Date;
+  create_at: Date;
+  has_read: boolean;
 }
 
 const ChatSchema = new Schema({
-  chat_id: {
+  id: {
     type: String,
     required: true
   },
@@ -26,7 +27,13 @@ const ChatSchema = new Schema({
   },
 
   content: {
-    type: String
+    type: String,
+    required: true
+  },
+
+  has_read: {
+    type: Boolean,
+    default: false
   },
 
   create_at: {
@@ -34,10 +41,6 @@ const ChatSchema = new Schema({
     default: Date.now
   }
 });
-
-// ChatSchema.virtual('chat_id').get(function() {
-//   return [this.from, this.to].sort().join('_')
-// })
 
 const ChatModel: Model<ChatDocument> = model("Chat", ChatSchema);
 

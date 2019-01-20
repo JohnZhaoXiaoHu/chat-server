@@ -1,12 +1,12 @@
 import { Context, BaseContext } from "koa";
-import { User } from "../models";
-import { md5, validator, createToken } from "../utils";
+import { User, Friend } from "../models";
+import { md5, validator, createToken, Unique } from "../utils";
 
 export default class UserController {
-  public static async auth(ctx: BaseContext) {
-    const { user } = ctx.state;
+  public static async getInfo(ctx: BaseContext) {
+    const { target } = ctx.state;
     try {
-      ctx.body = await User.findById(user._id, { password: 0 });
+      ctx.body = await User.findById(target._id, { password: 0 });
     } catch (err) {
       ctx.body = "未找到用户信息";
       ctx.response.status = 500;
@@ -21,7 +21,7 @@ export default class UserController {
 
     if ([username, password].some(value => !value)) {
       ctx.body = "信息输入不完整";
-      ctx.response.status = 400;
+      ctx.response.status = 422;
       return;
     }
 
@@ -31,8 +31,8 @@ export default class UserController {
         { password: 0 }
       );
       if (!user) {
-        ctx.body = "用户名密码输入错误";
-        ctx.response.status = 400;
+        ctx.body = "用户名或密码错误";
+        ctx.response.status = 403;
         return;
       }
 
@@ -46,7 +46,7 @@ export default class UserController {
     }
   }
 
-  public static async new(ctx: BaseContext) {
+  public static async add(ctx: BaseContext) {
     let { username, password } = ctx.request.body;
 
     username = username.trim().toLowerCase();
@@ -54,25 +54,20 @@ export default class UserController {
 
     if ([username, password].some(value => !value)) {
       ctx.body = "信息输入不完整";
-      ctx.response.status = 400;
+      ctx.response.status = 422;
       return;
     }
 
     if (!validator.isUsername(username)) {
       ctx.body = "用户名非法";
-      ctx.response.status = 400;
+      ctx.response.status = 422;
       return;
     }
 
-    const sameUser = await User.findOne({ username });
-    if (sameUser) {
-      if (sameUser.username === username) {
-        ctx.body = "用户名重复";
-        ctx.response.status = 400;
-        return;
-      }
-
-      ctx.response.status = 400;
+    const hasSame = await User.findOne({ username });
+    if (hasSame) {
+      ctx.body = "用户名重复";
+      ctx.response.status = 422;
       return;
     }
 
@@ -98,16 +93,65 @@ export default class UserController {
       const user = await User.findById(id, { password: 0 });
       if (!user) {
         ctx.body = "未找到用户信息";
-        ctx.response.status = 400;
+        ctx.response.status = 404;
         return;
       }
 
       ctx.body = user;
-      return;
     } catch (err) {
       ctx.body = "服务器错误";
       ctx.response.status = 500;
+    }
+  }
+
+  public static async getFriends(ctx: BaseContext) {
+    const { target } = ctx.state;
+    try {
+      const friends = await Friend.find({
+        $or: [
+          {
+            from: target._id
+            // is_approved: true
+          },
+          {
+            to: target._id
+            // is_approved: true
+          }
+        ]
+      });
+      ctx.body = friends;
+    } catch (err) {}
+  }
+
+  public static async addFriends(ctx: BaseContext) {
+    const { target } = ctx.state;
+    const { id } = ctx.params;
+    const friendId = Unique.id(target._id, id);
+
+    const isFriend = await Friend.findOne({ id: friendId });
+    if (isFriend) {
+      if (isFriend.is_approved) {
+        ctx.response.status = 422;
+        ctx.body = "你们已经是朋友";
+        return;
+      }
+      // TODO: modify friend doc
       return;
+    }
+
+    const friend = new Friend({
+      id: friendId,
+      from: target._id,
+      to: id
+    });
+
+    try {
+      const saved = await friend.save();
+      ctx.response.status = 201;
+      ctx.body = saved;
+    } catch (err) {
+      ctx.body = "添加失败";
+      ctx.response.status = 500;
     }
   }
 }

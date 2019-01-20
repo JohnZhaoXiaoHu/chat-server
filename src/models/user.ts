@@ -9,12 +9,12 @@ export interface UserDocument extends Document {
   avatar?: string;
   gender?: number;
   birthday?: Date;
-  is_admin?: boolean;
-  is_block?: boolean;
-  create_at?: Date;
-  update_at?: Date;
-  is_star?: boolean;
-  is_verify?: boolean;
+  is_admin: boolean;
+  is_block: boolean;
+  create_at: Date;
+  update_at: Date;
+  is_star: boolean;
+  is_verify: boolean;
   retrieve_time?: number;
   retrieve_key?: string;
 }
@@ -26,9 +26,7 @@ const UserSchema: Schema = new Schema({
     required: true
   },
 
-  nickname: {
-    type: String
-  },
+  nickname: { type: String },
 
   password: {
     type: String,
@@ -45,35 +43,43 @@ const UserSchema: Schema = new Schema({
   //   unique: true
   // },
 
-  location: {
-    type: String
-  },
+  location: { type: String },
 
-  signature: {
-    type: String
-  },
+  signature: { type: String },
 
-  avatar: {
-    type: String
-  },
+  avatar: { type: String },
 
   // 0:female 1:male
-  gender: {
-    type: Number
+  gender: { type: Number },
+
+  birthday: { type: Date },
+
+  is_admin: {
+    type: Boolean,
+    default: false
+  },
+  is_block: {
+    type: Boolean,
+    default: false
   },
 
-  birthday: {
-    type: Date
+  create_at: {
+    type: Date,
+    default: Date.now
+  },
+  update_at: {
+    type: Date,
+    default: Date.now
   },
 
-  is_admin: { type: Boolean, default: false },
-  is_block: { type: Boolean, default: false },
-
-  create_at: { type: Date, default: Date.now },
-  update_at: { type: Date, default: Date.now },
-
-  is_star: { type: Boolean, default: false },
-  is_verify: { type: Boolean, default: false },
+  is_star: {
+    type: Boolean,
+    default: false
+  },
+  is_verify: {
+    type: Boolean,
+    default: false
+  },
 
   // verify pwd modify info
   retrieve_time: { type: Number },
@@ -88,6 +94,6 @@ UserSchema.pre("save", function(this: UserDocument, next) {
   next();
 });
 
-// const UserModel: Model<UserDocument> =
+const UserModel: Model<UserDocument> = model<UserDocument>("User", UserSchema);
 
-export default model<UserDocument>("User", UserSchema);
+export default UserModel;

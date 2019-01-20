@@ -1,19 +1,21 @@
 import { BaseContext } from "koa";
 import { Chat } from "../models";
+import { Unique } from "../utils";
 
 export default class ChatController {
   public static async add(ctx: BaseContext) {
     const { id } = ctx.params;
+    const { user } = ctx.state;
     let { content } = ctx.request.body;
     content = content.trim();
-    const from = ctx.request.header.authorization.split(" ")[1];
+    const from = user._id;
     const to = id;
 
     const chat = new Chat({
       to,
       from,
       content,
-      chat_id: [from, to].sort().join("_")
+      id: Unique.id(from, to)
     });
 
     try {
@@ -27,11 +29,12 @@ export default class ChatController {
   }
 
   public static async get(ctx: BaseContext) {
-    const userId = ctx.request.header.authorization.split(" ")[1];
+    const { user } = ctx.state;
+    console.log(user);
 
     try {
       const chatList = await Chat.find({
-        $or: [{ from: userId }, { to: userId }]
+        $or: [{ from: user._id }, { to: user._id }]
       });
       ctx.body = chatList;
     } catch (err) {

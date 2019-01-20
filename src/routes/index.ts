@@ -3,15 +3,19 @@ import { Chat, User } from "../controller";
 
 const router = new Router();
 
-router.post("/join", User.new);
+router.post("/join", User.add);
 router.post("/login", User.login);
 
 // get user info
-router.get("/user", User.auth);
+router.get("/user", User.getInfo);
 router.get("/user/:id", User.get);
 
-// add chat
+router.get("/friends", User.getFriends);
+router.post("/friend/:id", User.addFriends);
+
+// get chat list
 router.get("/chat", Chat.get);
+// add chat
 router.post("/chat/:id", Chat.add);
 
 export default router;
