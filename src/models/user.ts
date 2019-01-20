@@ -1,10 +1,29 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+import { Schema, Model, model, Document } from "mongoose";
 
-const UserSchema = new Schema({
+export interface UserDocument extends Document {
+  username: string;
+  nickname?: string;
+  password: string;
+  location?: string;
+  signature?: string;
+  avatar?: string;
+  gender?: number;
+  birthday?: Date;
+  is_admin?: boolean;
+  is_block?: boolean;
+  create_at?: Date;
+  update_at?: Date;
+  is_star?: boolean;
+  is_verify?: boolean;
+  retrieve_time?: number;
+  retrieve_key?: string;
+}
+
+const UserSchema: Schema = new Schema({
   username: {
     type: String,
-    unique: true
+    unique: true,
+    required: true
   },
 
   nickname: {
@@ -12,7 +31,8 @@ const UserSchema = new Schema({
   },
 
   password: {
-    type: String
+    type: String,
+    required: true
   },
 
   // phone: {
@@ -58,14 +78,16 @@ const UserSchema = new Schema({
   // verify pwd modify info
   retrieve_time: { type: Number },
   retrieve_key: { type: String }
-})
+});
 
-UserSchema.index({ username: 1 })
+UserSchema.index({ username: 1 });
 // UserSchema.index({ email: 1 })
 
-UserSchema.pre('save', next => {
-  this.update_at = new Date()
-  next()
-})
+UserSchema.pre("save", function(this: UserDocument, next) {
+  this.update_at = new Date();
+  next();
+});
 
-module.exports = mongoose.model('User', UserSchema)
+// const UserModel: Model<UserDocument> =
+
+export default model<UserDocument>("User", UserSchema);
