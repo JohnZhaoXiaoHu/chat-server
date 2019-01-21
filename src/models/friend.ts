@@ -1,4 +1,3 @@
-// origin
 import { Schema, Model, model, Document } from "mongoose";
 const ObjectId = Schema.Types.ObjectId;
 

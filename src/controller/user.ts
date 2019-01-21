@@ -1,6 +1,6 @@
 import { Context, BaseContext } from "koa";
 import { User, Friend } from "../models";
-import { md5, validator, createToken, Unique } from "../utils";
+import { md5, validator, createToken, Id } from "../utils";
 
 export default class UserController {
   public static async getInfo(ctx: BaseContext) {
@@ -106,6 +106,7 @@ export default class UserController {
 
   public static async getFriends(ctx: BaseContext) {
     const { target } = ctx.state;
+
     try {
       const friends = await Friend.find({
         $or: [
@@ -119,14 +120,27 @@ export default class UserController {
           }
         ]
       });
-      ctx.body = friends;
+
+      const list = await Promise.all(
+        friends.map(({ id }) =>
+          User.findById(Id.filter(target._id, id), { password: 0 }).exec()
+        )
+      );
+
+      ctx.body = friends.reduce((data: any, friend, idx) => {
+        data[Id.filter(target._id, friend.id)] = {
+          friend,
+          target: list[idx]
+        };
+        return data;
+      }, {});
     } catch (err) {}
   }
 
   public static async addFriends(ctx: BaseContext) {
     const { target } = ctx.state;
     const { id } = ctx.params;
-    const friendId = Unique.id(target._id, id);
+    const friendId = Id.unique(target._id, id);
 
     const isFriend = await Friend.findOne({ id: friendId });
     if (isFriend) {
