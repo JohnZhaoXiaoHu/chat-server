@@ -6,6 +6,7 @@ import cors from "./middleware/cors";
 import router from "./routes";
 import "./models";
 import config from "./config";
+import socket from "./socket";
 
 const app = new Koa();
 
@@ -38,6 +39,7 @@ app.use(
 app.use(router.routes()).use(router.allowedMethods());
 
 const server = http.createServer(app.callback());
+socket(server);
 server.listen(8080, () => {
   console.log("server is running");
 });
