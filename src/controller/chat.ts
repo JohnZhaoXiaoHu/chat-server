@@ -3,6 +3,29 @@ import { Chat } from "../models";
 import { Id } from "../utils";
 
 export default class ChatController {
+  public static async read(ctx: BaseContext) {
+    const { id } = ctx.params;
+    const { target } = ctx.state;
+
+    console.log(target);
+
+    try {
+      const list = await Chat.find({
+        id: Id.unique(id, target._id),
+        has_read: false
+      });
+      const savedList = await Promise.all(
+        list.map(item => {
+          item.has_read = true;
+          return item.save();
+        })
+      );
+      ctx.body = savedList;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   public static async add(ctx: BaseContext) {
     const { id } = ctx.params;
     const { target } = ctx.state;

@@ -17,5 +17,7 @@ router.post("/friend/:id", User.addFriends);
 router.get("/chat", Chat.get);
 // add chat
 router.post("/chat/:id", Chat.add);
+// read chat
+router.patch("/chat/:id", Chat.read);
 
 export default router;

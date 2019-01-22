@@ -14,7 +14,6 @@ export interface FriendDocument extends Document {
 const FriendSchema = new Schema({
   id: {
     type: String,
-    unique: true,
     required: true
   },
 
